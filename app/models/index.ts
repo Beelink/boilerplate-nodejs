@@ -1,7 +1,5 @@
 import mongoose from "mongoose";
 import DbConfig from "../config/Db.config";
-import { Response as IResponse } from "express";
-import TDataResponse from "../types/DataResponse.type";
 
 function connectToDb() {
   mongoose

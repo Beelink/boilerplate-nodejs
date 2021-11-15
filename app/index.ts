@@ -1,6 +1,7 @@
 import express, { Application as IApplication } from "express";
 import cors from "cors";
 import db from "./models";
+import Routes from "./routes";
 
 const app: IApplication = express();
 
@@ -18,6 +19,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // connect to db
 db.connect();
+
+// routes
+app.use("/api", Routes);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;

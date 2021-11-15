@@ -1,16 +1,18 @@
 import { Response as IResponse } from "express";
 import TDataResponse from "../types/DataResponse.type";
 
-function sendDataResponse(res: IResponse, dataResponse: TDataResponse) {
+function sendDataResponse(
+  res: IResponse,
+  dataResponse: TDataResponse
+): IResponse {
   if (dataResponse.error) {
-    res.status(200).send({ error: true, message: dataResponse.message });
-  } else {
-    res.status(200).send({
-      error: false,
-      message: dataResponse.message?.toString(),
-      data: dataResponse.data,
-    });
+    return res.status(200).send({ error: true, message: dataResponse.message });
   }
+  return res.status(200).send({
+    error: false,
+    message: dataResponse.message,
+    data: dataResponse.data,
+  });
 }
 
 const HttpHelper = {
