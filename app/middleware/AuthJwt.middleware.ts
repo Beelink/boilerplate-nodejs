@@ -14,7 +14,7 @@ const verifyToken = (req: IRequest, res: IResponse, next: INextFunction) => {
     : "";
 
   if (!token) {
-    return res.status(403).send({ message: "No token provided!" });
+    return res.status(403).send({ message: "No auth token provided!" });
   }
 
   jwt.verify(token, AuthConfig.secret, (err, decoded) => {

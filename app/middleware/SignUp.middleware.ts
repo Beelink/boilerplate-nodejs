@@ -3,10 +3,8 @@ import {
   Response as IResponse,
   NextFunction as INextFunction,
 } from "express";
-// import UserRoles from "../enums/UserRole.enum";
 import UserModel from "../models/User.model";
-import IUser from "../interfaces/User.interface";
-// import TDataMessage from "../types/DataResponse.type";
+import HttpHelper from "../helpers/Http.helper";
 
 const checkDuplicateUsernameOrEmail = (
   req: IRequest,
@@ -18,12 +16,18 @@ const checkDuplicateUsernameOrEmail = (
     username: req.body.username,
   }).exec((err, user) => {
     if (err) {
-      res.status(500).send({ message: err });
+      HttpHelper.sendDataResponse(res, {
+        error: true,
+        message: err.toString(),
+      });
       return;
     }
 
     if (user) {
-      res.status(400).send({ message: "Failed! Username is already in use!" });
+      HttpHelper.sendDataResponse(res, {
+        error: true,
+        message: "Failed! Username is already in use!",
+      });
       return;
     }
 
@@ -32,12 +36,18 @@ const checkDuplicateUsernameOrEmail = (
       email: req.body.email,
     }).exec((err, user) => {
       if (err) {
-        res.status(500).send({ message: err });
+        HttpHelper.sendDataResponse(res, {
+          error: true,
+          message: err.toString(),
+        });
         return;
       }
 
       if (user) {
-        res.status(400).send({ message: "Failed! Email is already in use!" });
+        HttpHelper.sendDataResponse(res, {
+          error: true,
+          message: "Failed! Email is already in use!",
+        });
         return;
       }
 

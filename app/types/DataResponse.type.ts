@@ -1,5 +1,8 @@
+import { CallbackError as TCallbackError } from "mongoose";
+
 type TDataResponse = {
-  message: string;
+  error?: boolean;
+  message: string | TCallbackError;
   data?: object;
 };
 
