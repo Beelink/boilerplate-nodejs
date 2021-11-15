@@ -1,0 +1,22 @@
+{
+  "name": "nodejs-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Beelink/nodejs-server.git"
+  },
+  "author": "Eugene Volynko",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Beelink/nodejs-server/issues"
+  },
+  "homepage": "https://github.com/Beelink/nodejs-server#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
