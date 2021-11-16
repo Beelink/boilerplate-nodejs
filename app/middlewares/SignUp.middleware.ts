@@ -10,7 +10,7 @@ const checkDuplicateUsernameOrEmail = (
   req: IRequest,
   res: IResponse,
   next: INextFunction
-) => {
+): void => {
   // Username
   UserModel.findOne({
     username: req.body.username,

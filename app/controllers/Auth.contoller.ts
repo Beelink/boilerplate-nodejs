@@ -10,7 +10,7 @@ function signUp(req: IRequest, res: IResponse): void {
   const user = new UserModel({
     username: req.body.username,
     email: req.body.email,
-    password: bcrypt.hashSync(req.body.password, 8),
+    password: req.body.password ? bcrypt.hashSync(req.body.password, 8) : "",
     role: req.body.role || EUserRole.user,
   });
 

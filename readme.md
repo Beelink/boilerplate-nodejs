@@ -1,0 +1,1 @@
+# Node.js server template (with MongoDB, Express and Typescript)
