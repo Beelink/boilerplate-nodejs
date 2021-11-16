@@ -14,7 +14,7 @@ function signUp(req: IRequest, res: IResponse): void {
     role: req.body.role || EUserRole.user,
   });
 
-  user.save((err, user) => {
+  user.save((err) => {
     if (err) {
       return HttpHelper.sendDataResponse(res, {
         error: true,
@@ -27,28 +27,24 @@ function signUp(req: IRequest, res: IResponse): void {
   });
 }
 
-function getCurrentUser(req: IRequest, res: IResponse): void {
-  HttpHelper.sendDataResponse(res, {
-    message: "* NEED TO BE IMPLEMENTED *",
-  });
-}
-
 function signIn(req: IRequest, res: IResponse): void {
   UserModel.findOne({
     email: req.body.email,
   }).exec((err, user) => {
     if (err) {
-      return HttpHelper.sendDataResponse(res, {
+      HttpHelper.sendDataResponse(res, {
         error: true,
         message: err.toString(),
       });
+      return;
     }
 
     if (!user) {
-      return HttpHelper.sendDataResponse(res, {
+      HttpHelper.sendDataResponse(res, {
         error: true,
         message: "User not found!",
       });
+      return;
     }
 
     const passwordIsValid = bcrypt.compareSync(
@@ -57,17 +53,18 @@ function signIn(req: IRequest, res: IResponse): void {
     );
 
     if (!passwordIsValid) {
-      return HttpHelper.sendDataResponse(res, {
+      HttpHelper.sendDataResponse(res, {
         error: true,
         message: "Invalid password!",
       });
+      return;
     }
 
     const token = jwt.sign({ id: user.id }, AuthConfig.secret, {
-      expiresIn: 86400, // 24 hours
+      expiresIn: AuthConfig.expiresIn,
     });
 
-    return HttpHelper.sendDataResponse(res, {
+    HttpHelper.sendDataResponse(res, {
       message: "User was signed in successfully!",
       data: {
         id: user._id,
@@ -83,7 +80,6 @@ function signIn(req: IRequest, res: IResponse): void {
 const AuthController = {
   signUp,
   signIn,
-  getCurrentUser,
 };
 
 export default AuthController;

@@ -1,4 +1,4 @@
-import jwt, { JwtPayload as IJwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import {
   Request as IRequest,
   Response as IResponse,
@@ -11,22 +11,16 @@ import EUserRole from "../enums/UserRole.enum";
 import IVerifyTokenRequest from "../interfaces/VerifyTokenRequest.interface";
 import IIsAdminRequest from "../interfaces/IsAdminRequest.interface";
 
-const verifyToken = (
-  req: IRequest,
-  res: IResponse,
-  next: INextFunction
-): void => {
+function verifyToken(req: IRequest, res: IResponse, next: INextFunction): void {
   verifyTokenExtended(req as IVerifyTokenRequest, res, next);
-};
+}
 
-const verifyTokenExtended = (
+function verifyTokenExtended(
   req: IVerifyTokenRequest,
   res: IResponse,
   next: INextFunction
-): void => {
-  const token: string = req.headers["x-access-token"]
-    ? req.headers["x-access-token"].toString()
-    : "";
+): void {
+  const token: string = req.headers[AuthConfig.accessTokenName]?.toString() || "";
 
   if (!token) {
     HttpHelper.sendDataResponse(res, {
@@ -47,17 +41,17 @@ const verifyTokenExtended = (
     req.user = user;
     next();
   });
-};
+}
 
-const isAdmin = (req: IRequest, res: IResponse, next: INextFunction): void => {
+function isAdmin(req: IRequest, res: IResponse, next: INextFunction): void {
   isAdminExtended(req as IIsAdminRequest, res, next);
-};
+}
 
-const isAdminExtended = (
+function isAdminExtended(
   req: IIsAdminRequest,
   res: IResponse,
   next: INextFunction
-): void => {
+): void {
   UserModel.findById(req.userId).exec((err, user) => {
     if (err) {
       HttpHelper.sendDataResponse(res, {
@@ -80,11 +74,11 @@ const isAdminExtended = (
     } else {
       HttpHelper.sendDataResponse(res, {
         error: true,
-        message: "Require Admin Role!",
+        message: "Require admin role!",
       });
     }
   });
-};
+}
 
 const AuthJwtMiddleware = {
   verifyToken,

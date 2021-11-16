@@ -5,13 +5,10 @@ function sendDataResponse(
   res: IResponse,
   dataResponse: TDataResponse
 ): IResponse {
-  if (dataResponse.error) {
-    return res.status(200).send({ error: true, message: dataResponse.message });
-  }
   return res.status(200).send({
-    error: false,
+    error: dataResponse.error || false,
     message: dataResponse.message,
-    data: dataResponse.data,
+    data: dataResponse.data || {},
   });
 }
 
