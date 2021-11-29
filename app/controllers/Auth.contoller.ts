@@ -21,9 +21,7 @@ function signUp(req: IRequest, res: IResponse): void {
         message: err.toString(),
       });
     }
-    return HttpHelper.sendDataResponse(res, {
-      message: "User was registered successfully!",
-    });
+    signIn(req, res);
   });
 }
 
