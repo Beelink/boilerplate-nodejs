@@ -1,7 +1,7 @@
 const dbConfig = {
   host: "localhost",
   port: 27017,
-  dbName: "local_db",
+  dbName: "boilerplate-nodejs",
 };
 
 export default dbConfig;
