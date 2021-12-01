@@ -8,7 +8,7 @@ const app: IApplication = express();
 
 // cors
 const corsOptions = {
-  origin: apiConfig.clientUrl,
+  origin: apiConfig.clientPrefix,
 };
 app.use(cors(corsOptions));
 
@@ -21,11 +21,14 @@ app.use(express.urlencoded({ extended: true }));
 // connect to db
 db.connect();
 
+// static files & uploads
+app.use("/uploads", express.static("uploads"));
+
 // routes
 app.use(`/api/${apiConfig.apiVersion}`, Routes);
 
 // set port, listen for requests
-const PORT = process.env.PORT || apiConfig.port;
+const PORT = process.env.PORT || apiConfig.apiPort;
 app.listen(PORT, (): void => {
   console.log(`Server is running on port ${PORT}.`);
 });

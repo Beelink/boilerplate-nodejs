@@ -1,6 +1,6 @@
 const authConfig = {
   secret: "secret-key",
-  accessTokenName: "x-access-token",
+  accessTokenName: "user-access-token",
   expiresIn: 86400, // 24 hours
 };
 

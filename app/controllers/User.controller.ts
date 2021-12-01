@@ -42,6 +42,7 @@ function getCurrentUserExtended(
           username: user.username,
           email: user.email,
           role: user.role,
+          image: user.image,
         },
       });
     });

@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs";
 import UserModel from "../models/User.model";
 import HttpHelper from "../helpers/Http.helper";
 import EUserRole from "../enums/UserRole.enum";
+import UploadUtils from "../utils/Upload.utils";
 
 function signUp(req: IRequest, res: IResponse): void {
   const user = new UserModel({
@@ -12,6 +13,7 @@ function signUp(req: IRequest, res: IResponse): void {
     email: req.body.email,
     password: req.body.password ? bcrypt.hashSync(req.body.password, 8) : "",
     role: req.body.role || EUserRole.user,
+    image: UploadUtils.getFileUrl("blank-user-image.png"),
   });
 
   user.save((err) => {
@@ -69,6 +71,7 @@ function signIn(req: IRequest, res: IResponse): void {
         username: user.username,
         email: user.email,
         role: user.role,
+        image: user.image,
         accessToken: token,
       },
     });

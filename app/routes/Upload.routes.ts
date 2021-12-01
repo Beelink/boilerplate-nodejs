@@ -1,13 +1,15 @@
 import { Router } from "express";
+import UploadController from "../controllers/Upload.controller";
 import AuthJwtMiddleware from "../middlewares/AuthJwt.middleware";
-import UserController from "../controllers/User.controller";
 
 const router = Router();
 
 router.post(
-  "/user",
+  "/upload",
   [AuthJwtMiddleware.verifyToken],
-  UserController.getCurrentUser
+  UploadController.uploadSingleFile
 );
+
+router.get("/upload/:fileName", UploadController.getSingleFile);
 
 export default router;
