@@ -6,26 +6,34 @@ import UserModel from "../models/User.model";
 import HttpHelper from "../helpers/Http.helper";
 import EUserRole from "../enums/UserRole.enum";
 import UploadUtils from "../utils/Upload.utils";
+import PasswordUtils from "../utils/Password.utils";
 
 function signUp(req: IRequest, res: IResponse): void {
-  const user = new UserModel({
-    username: req.body.username,
-    email: req.body.email,
-    password: req.body.password ? bcrypt.hashSync(req.body.password, 8) : "",
-    role: req.body.role || EUserRole.user,
-    image: UploadUtils.getFileUrl("blank-user-image.png"),
-  });
+  if (PasswordUtils.check(req.body.password)) {
+    const user = new UserModel({
+      username: req.body.username,
+      email: req.body.email,
+      password: req.body.password ? bcrypt.hashSync(req.body.password, 8) : "",
+      role: req.body.role || EUserRole.user,
+      image: UploadUtils.getFileUrl("blank-user-image.png"),
+    });
 
-  user.save((err) => {
-    if (err) {
-      HttpHelper.sendDataResponse(res, {
-        error: true,
-        message: err.toString(),
-      });
-      return;
-    }
-    signIn(req, res);
-  });
+    user.save((err) => {
+      if (err) {
+        HttpHelper.sendDataResponse(res, {
+          error: true,
+          message: err.toString(),
+        });
+        return;
+      }
+      signIn(req, res);
+    });
+  } else {
+    HttpHelper.sendDataResponse(res, {
+      error: true,
+      message: "Your new password does not meet complexity requirements!",
+    });
+  }
 }
 
 function signIn(req: IRequest, res: IResponse): void {

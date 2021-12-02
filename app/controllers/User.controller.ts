@@ -5,6 +5,7 @@ import AuthConfig from "../config/Auth.config";
 import HttpHelper from "../helpers/Http.helper";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import PasswordUtils from "../utils/Password.utils";
 
 function getCurrentUser(req: IRequest, res: IResponse): void {
   const token: string =
@@ -53,7 +54,6 @@ function changeUserPassword(req: IRequest, res: IResponse): void {
     req.headers[AuthConfig.accessTokenName]?.toString() || "";
   if (token) {
     const payload = jwt.decode(token) as IUserJwtPayload;
-    console.log(payload)
     UserModel.findById(payload.id).exec((err, user) => {
       if (err) {
         HttpHelper.sendDataResponse(res, {
@@ -63,28 +63,33 @@ function changeUserPassword(req: IRequest, res: IResponse): void {
         return;
       }
 
-      console.log(user)
-      console.log(req.body.oldPassword)
-
       if (user) {
         if (bcrypt.compareSync(req.body.oldPassword, user.password)) {
-          user.password = bcrypt.hashSync(req.body.newPassword, 8);
-          user.save((err) => {
-            if (err) {
-              HttpHelper.sendDataResponse(res, {
-                error: true,
-                message: err.toString(),
-              });
-            } else {
-              HttpHelper.sendDataResponse(res, {
-                message: "Password was changed successfully!",
-              });
-            }
-          });
+          if (PasswordUtils.check(req.body.newPassword)) {
+            user.password = bcrypt.hashSync(req.body.newPassword, 8);
+            user.save((err) => {
+              if (err) {
+                HttpHelper.sendDataResponse(res, {
+                  error: true,
+                  message: err.toString(),
+                });
+              } else {
+                HttpHelper.sendDataResponse(res, {
+                  message: "Password was changed successfully!",
+                });
+              }
+            });
+          } else {
+            HttpHelper.sendDataResponse(res, {
+              error: true,
+              message: "Your new password does not meet complexity requirements!",
+            });
+          }
         } else {
           HttpHelper.sendDataResponse(res, {
             error: true,
-            message: "Your current password is missing or incorrect. It's required to change the Password!",
+            message:
+              "Your current password is missing or incorrect. It's required to change the Password!",
           });
         }
       } else {
