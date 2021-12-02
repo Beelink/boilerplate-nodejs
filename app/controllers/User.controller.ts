@@ -1,23 +1,16 @@
 import { Request as IRequest, Response as IResponse } from "express";
-import IGetCurrentUserRequest from "../interfaces/GetCurrentUserRequest.interface";
-import IGetCurrentUserPayload from "../interfaces/GetCurrentUserPayload.interface";
+import IUserJwtPayload from "../interfaces/UserJwtPayload.interface";
 import UserModel from "../models/User.model";
 import AuthConfig from "../config/Auth.config";
 import HttpHelper from "../helpers/Http.helper";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 
 function getCurrentUser(req: IRequest, res: IResponse): void {
-  getCurrentUserExtended(req as IGetCurrentUserRequest, res);
-}
-
-function getCurrentUserExtended(
-  req: IGetCurrentUserRequest,
-  res: IResponse
-): void {
   const token: string =
     req.headers[AuthConfig.accessTokenName]?.toString() || "";
   if (token) {
-    const payload = jwt.decode(token) as IGetCurrentUserPayload;
+    const payload = jwt.decode(token) as IUserJwtPayload;
     UserModel.findById(payload.id).exec((err, user) => {
       if (err) {
         HttpHelper.sendDataResponse(res, {
@@ -43,6 +36,7 @@ function getCurrentUserExtended(
           email: user.email,
           role: user.role,
           image: user.image,
+          accessToken: token,
         },
       });
     });
@@ -54,8 +48,63 @@ function getCurrentUserExtended(
   }
 }
 
+function changeUserPassword(req: IRequest, res: IResponse): void {
+  const token: string =
+    req.headers[AuthConfig.accessTokenName]?.toString() || "";
+  if (token) {
+    const payload = jwt.decode(token) as IUserJwtPayload;
+    console.log(payload)
+    UserModel.findById(payload.id).exec((err, user) => {
+      if (err) {
+        HttpHelper.sendDataResponse(res, {
+          error: true,
+          message: err.toString(),
+        });
+        return;
+      }
+
+      console.log(user)
+      console.log(req.body.oldPassword)
+
+      if (user) {
+        if (bcrypt.compareSync(req.body.oldPassword, user.password)) {
+          user.password = bcrypt.hashSync(req.body.newPassword, 8);
+          user.save((err) => {
+            if (err) {
+              HttpHelper.sendDataResponse(res, {
+                error: true,
+                message: err.toString(),
+              });
+            } else {
+              HttpHelper.sendDataResponse(res, {
+                message: "Password was changed successfully!",
+              });
+            }
+          });
+        } else {
+          HttpHelper.sendDataResponse(res, {
+            error: true,
+            message: "Your current password is missing or incorrect. It's required to change the Password!",
+          });
+        }
+      } else {
+        HttpHelper.sendDataResponse(res, {
+          error: true,
+          message: "User not found!",
+        });
+      }
+    });
+  } else {
+    HttpHelper.sendDataResponse(res, {
+      error: true,
+      message: "No auth token provided!",
+    });
+  }
+}
+
 const UserController = {
   getCurrentUser,
+  changeUserPassword,
 };
 
 export default UserController;

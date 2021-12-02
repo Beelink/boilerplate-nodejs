@@ -20,7 +20,8 @@ function verifyTokenExtended(
   res: IResponse,
   next: INextFunction
 ): void {
-  const token: string = req.headers[AuthConfig.accessTokenName]?.toString() || "";
+  const token: string =
+    req.headers[AuthConfig.accessTokenName]?.toString() || "";
 
   if (!token) {
     HttpHelper.sendDataResponse(res, {

@@ -18,10 +18,11 @@ function signUp(req: IRequest, res: IResponse): void {
 
   user.save((err) => {
     if (err) {
-      return HttpHelper.sendDataResponse(res, {
+      HttpHelper.sendDataResponse(res, {
         error: true,
         message: err.toString(),
       });
+      return;
     }
     signIn(req, res);
   });

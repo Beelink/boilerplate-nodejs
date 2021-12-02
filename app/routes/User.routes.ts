@@ -4,10 +4,16 @@ import UserController from "../controllers/User.controller";
 
 const router = Router();
 
-router.post(
+router.get(
   "/user",
   [AuthJwtMiddleware.verifyToken],
   UserController.getCurrentUser
+);
+
+router.post(
+  "/user/change-password",
+  [AuthJwtMiddleware.verifyToken],
+  UserController.changeUserPassword
 );
 
 export default router;
